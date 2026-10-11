@@ -35,4 +35,29 @@ async def ban_error(ctx, error):
     elif isinstance(error, commands.MemberNotFound):
         await ctx.send("Kullanıcı bulunamadı!")
 
+@client.event
+async def on_message(message):
+    
+    if message.author == client.user:
+        return
+
+    
+    if "https://" in message.content:
+        try:
+            
+            await message.guild.ban(message.author, reason="Link / Reklam paylaşımı yasak!")
+            await message.channel.send(f"{message.author.mention} link paylaştığı için banlandı!")
+        except Exception as e:
+            print(f"Banlama işlemi başarısız oldu: {e}")
+
+    
+    await client.process_commands(message)
+
+@bot.event
+async def on_member_join(member):
+    # Karşılama mesajı gönderme
+    for channel in member.guild.text_channels:
+        await channel.send(f'Hoş geldiniz: {member.mention}!')
+
+
 bot.run(token)
